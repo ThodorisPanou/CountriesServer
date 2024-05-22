@@ -26,7 +26,7 @@ namespace CountriesServer.Services
                 _context.Add(emptySession);
                 await _context.SaveChangesAsync();
             }
-            Session foundSession = _context.Sessions.Where(x => x.SessionID == guess.SessionID).First(
+            Session foundSession = _context.Sessions.Where(x => x.SessionID == guess.SessionID).First();
             await _context.SaveChangesAsync();
 
             ResponseDTO response = new ResponseDTO();
