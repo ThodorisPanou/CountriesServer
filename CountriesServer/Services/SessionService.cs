@@ -12,7 +12,7 @@ namespace CountriesServer.Services
             _context = context; _applicationContext = applicationContext;
         }
 
-        public async Task<bool> AddSession(DTO.Session guess)
+        public async Task<ResponseDTO> AddSession(DTO.Session guess)
         {
             if (guess.SessionID == null && guess.GuessCount == 1)
             {
@@ -26,15 +26,15 @@ namespace CountriesServer.Services
                 _context.Add(emptySession);
                 await _context.SaveChangesAsync();
             }
-            Session foundSession = _context.Sessions.Where(x => x.SessionID == guess.SessionID).First();
-            foundSession.GuessCount++;
+            Session foundSession = _context.Sessions.Where(x => x.SessionID == guess.SessionID).First(
             await _context.SaveChangesAsync();
-            if (guess.Guess == foundSession.Guess)
-            {
-                return true;
-            }
-            return false;
 
+            ResponseDTO response = new ResponseDTO();
+            response.SessionID = guess.SessionID;
+            response.GuessCount = foundSession.GuessCount;
+            response.Success = (guess.Guess == foundSession.Guess);
+
+            return response;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using CountriesServer.Services;
+﻿using CountriesServer.DTO;
+using CountriesServer.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CountriesServer.Controllers
@@ -11,13 +12,10 @@ namespace CountriesServer.Controllers
         public SessionsController(SessionService service) { _service = service; }
 
         [HttpPost("guess")]
-        public async Task<IActionResult> Guess([FromBody] DTO.Session guessRequest)
+        public async Task<ResponseDTO> Guess([FromBody] Session guessRequest)
         {
-            bool result = await _service.AddSession(guessRequest);
-            if (result)
-                return Ok("Right Country");
-            else
-                return Ok("Wrong Country");
+            var result = await _service.AddSession(guessRequest);
+            return result;
         }
     }
 }
