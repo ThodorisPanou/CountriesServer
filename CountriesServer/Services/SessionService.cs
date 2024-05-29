@@ -12,29 +12,65 @@ namespace CountriesServer.Services
             _context = context; _applicationContext = applicationContext;
         }
 
-        public async Task<ResponseDTO> AddSession(DTO.Session guess)
+        public async Task<ResponseDTO> Guess(DTO.Session guess)
         {
             if (guess.SessionID == null && guess.GuessCount == 1)
             {
-                DTO.Session emptySession = new DTO.Session();
-                emptySession.SessionID = Guid.NewGuid().ToString();
-                guess.SessionID = emptySession.SessionID;
-                var top15Countries = _applicationContext.Countries.OrderByDescending(c => c.Population).Take(15).ToList();
-                Random random = new Random();
-                emptySession.Guess = top15Countries[random.Next(top15Countries.Count)].Name;
-                emptySession.GuessCount = 1;
-                _context.Add(emptySession);
-                await _context.SaveChangesAsync();
+                guess = await AddUserSession(guess);
             }
+
             Session foundSession = _context.Sessions.Where(x => x.SessionID == guess.SessionID).First();
+            foundSession.GuessCount++;
             await _context.SaveChangesAsync();
 
-            ResponseDTO response = new ResponseDTO();
-            response.SessionID = guess.SessionID;
-            response.GuessCount = foundSession.GuessCount;
+            ResponseDTO response = new ResponseDTO(guess);
             response.Success = (guess.Guess == foundSession.Guess);
 
+            Country requestedCountry = _applicationContext.Countries.Where(x=>x.Name == guess.Guess).FirstOrDefault();
+            Country tobeFoundCountry = _applicationContext.Countries.Where(x => x.Name == foundSession.Guess).FirstOrDefault();
+
+            response = response.CopyData(requestedCountry);
+
+            if (requestedCountry != null && tobeFoundCountry != null)
+            {
+                CalculateResponse(response, requestedCountry, tobeFoundCountry);
+            }
             return response;
         }
+
+        private static void CalculateResponse(ResponseDTO response, Country requestedCountry, Country tobeFoundCountry)
+        {
+            response.RegionResponse = (requestedCountry.Region == tobeFoundCountry.Region);
+            response.NameResponse = (requestedCountry.Name == tobeFoundCountry.Name);
+            if (requestedCountry.Population > tobeFoundCountry.Population)
+                response.PopulationResponse = -1;
+            else if (requestedCountry.Population < tobeFoundCountry.Population)
+                response.PopulationResponse = 1;
+            else
+                response.PopulationResponse = 0;
+            if (requestedCountry.Area > tobeFoundCountry.Area)
+                response.AreaResponse = -1;
+            else if (requestedCountry.Area < tobeFoundCountry.Area)
+                response.AreaResponse = 1;
+            else
+                response.AreaResponse = 0;
+            //if I guess Greece and country to be guessed is USA , then i need to guess Population higher so PopResponse=1
+            //if I Guess China and country to be guessed is Albania, then i need to guess Area lower so AreaResponse=-1
+        }
+
+        private async Task<DTO.Session> AddUserSession(Session guess)
+        {
+            DTO.Session emptySession = new DTO.Session();
+            emptySession.SessionID = Guid.NewGuid().ToString();
+            guess.SessionID = emptySession.SessionID;
+            var top15Countries = _applicationContext.Countries.OrderByDescending(c => c.Population).Take(15).ToList();
+            Random random = new Random();
+            emptySession.Guess = top15Countries[random.Next(top15Countries.Count)].Name;
+            emptySession.GuessCount = 1;
+            _context.Add(emptySession);
+            await _context.SaveChangesAsync();
+            return guess;
+        }
+
     }
 }
