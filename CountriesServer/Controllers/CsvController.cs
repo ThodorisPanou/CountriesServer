@@ -20,7 +20,7 @@ public class CsvController : ControllerBase
     [HttpPost("import")]
     public async Task<IActionResult> Import()
     {
-        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Data", "data.csv");
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Data", "output.csv");
         if (!System.IO.File.Exists(filePath))
             return NotFound("CSV file not found.");
 

@@ -20,5 +20,8 @@ namespace CountriesServer.DTO
         public double Deathrate { get; set; }
         public double Agriculture { get; set; }
         public double Industry { get; set; }
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
+
     }
 }

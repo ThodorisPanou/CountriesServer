@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using CountriesServer.DbContextClasses;
 using CountriesServer.Services;
+using Microsoft.Extensions.Options;
 
 namespace CountriesServer
 {
@@ -15,12 +16,23 @@ namespace CountriesServer
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigins",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin();
+                        builder.AllowAnyHeader();
+                        builder.AllowAnyMethod();
+                    });
+            });
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
             services.AddDbContext<SessionDbContext>(options =>
                 options.UseInMemoryDatabase("SessionsDB"));
             services.AddScoped<CsvService>();
             services.AddScoped<SessionService>();
+            services.AddScoped<CountriesListService>();
             services.AddControllers();
         }
 
@@ -41,12 +53,15 @@ namespace CountriesServer
 
             app.UseRouting();
 
+            app.UseCors("AllowAllOrigins");
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+
         }
     }
 

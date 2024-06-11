@@ -1,4 +1,5 @@
-﻿using CountriesServer.DbContextClasses;
+﻿using CountriesServer.Data;
+using CountriesServer.DbContextClasses;
 using CountriesServer.DTO;
 
 namespace CountriesServer.Services
@@ -42,6 +43,7 @@ namespace CountriesServer.Services
         {
             response.RegionResponse = (requestedCountry.Region == tobeFoundCountry.Region);
             response.NameResponse = (requestedCountry.Name == tobeFoundCountry.Name);
+            response.ContinentResponse = (ContinentRegion.Region_To_Continent_Map[requestedCountry.Region] == ContinentRegion.Region_To_Continent_Map[tobeFoundCountry.Region]);
             if (requestedCountry.Population > tobeFoundCountry.Population)
                 response.PopulationResponse = -1;
             else if (requestedCountry.Population < tobeFoundCountry.Population)
@@ -54,6 +56,18 @@ namespace CountriesServer.Services
                 response.AreaResponse = 1;
             else
                 response.AreaResponse = 0;
+            if (requestedCountry.Latitude > tobeFoundCountry.Latitude)
+                response.LatitudeResponse = -1;
+            else if (requestedCountry.Latitude < tobeFoundCountry.Latitude)
+                response.LatitudeResponse = 1;
+            else
+                response.LatitudeResponse = 0;
+            if (requestedCountry.Longitude > tobeFoundCountry.Longitude)
+                response.LongitudeResponse = -1;
+            else if (requestedCountry.Longitude < tobeFoundCountry.Longitude)
+                response.LongitudeResponse = 1;
+            else
+                response.LongitudeResponse = 0;
             //if I guess Greece and country to be guessed is USA , then i need to guess Population higher so PopResponse=1
             //if I Guess China and country to be guessed is Albania, then i need to guess Area lower so AreaResponse=-1
         }
@@ -63,9 +77,9 @@ namespace CountriesServer.Services
             DTO.Session emptySession = new DTO.Session();
             emptySession.SessionID = Guid.NewGuid().ToString();
             guess.SessionID = emptySession.SessionID;
-            var top15Countries = _applicationContext.Countries.OrderByDescending(c => c.Population).Take(15).ToList();
+            var top25Countries = _applicationContext.Countries.OrderByDescending(c => c.Population).Take(25).ToList();
             Random random = new Random();
-            emptySession.Guess = top15Countries[random.Next(top15Countries.Count)].Name;
+            emptySession.Guess = top25Countries[random.Next(top25Countries.Count)].Name;
             emptySession.GuessCount = 1;
             _context.Add(emptySession);
             await _context.SaveChangesAsync();
