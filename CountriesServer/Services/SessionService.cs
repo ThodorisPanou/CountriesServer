@@ -15,13 +15,14 @@ namespace CountriesServer.Services
 
         public async Task<ResponseDTO> Guess(DTO.Session guess)
         {
-            if (guess.SessionID == null && guess.GuessCount == 1)
+            if (guess.SessionID == null && guess.GuessCount == 0)
             {
                 guess = await AddUserSession(guess);
             }
 
             Session foundSession = _context.Sessions.Where(x => x.SessionID == guess.SessionID).First();
             foundSession.GuessCount++;
+            guess.GuessCount++;
             await _context.SaveChangesAsync();
 
             ResponseDTO response = new ResponseDTO(guess);

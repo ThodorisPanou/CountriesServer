@@ -8,7 +8,7 @@ namespace CountriesServer.DTO
 
         public ResponseDTO(Session guess) {
             SessionID = guess.SessionID;
-            GuessCount = guess.GuessCount+1;
+            GuessCount = guess.GuessCount;
         }
         public string? SessionID { get; set; }
 
