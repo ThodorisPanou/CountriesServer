@@ -20,7 +20,13 @@ namespace CountriesServer.Services
                 guess = await AddUserSession(guess);
             }
 
-            Session foundSession = _context.Sessions.Where(x => x.SessionID == guess.SessionID).First();
+            Session? foundSession = _context.Sessions.Where(x => x.SessionID == guess.SessionID).FirstOrDefault();
+            //found session is the Country to be found
+            //guess is the current guess
+
+            if (foundSession == null)
+                return null; //impliment this later
+
             foundSession.GuessCount++;
             guess.GuessCount++;
             await _context.SaveChangesAsync();
@@ -31,6 +37,7 @@ namespace CountriesServer.Services
             Country requestedCountry = _applicationContext.Countries.Where(x=>x.Name == guess.Guess).FirstOrDefault();
             Country tobeFoundCountry = _applicationContext.Countries.Where(x => x.Name == foundSession.Guess).FirstOrDefault();
 
+            
             response = response.CopyData(requestedCountry);
 
             if (requestedCountry != null && tobeFoundCountry != null)

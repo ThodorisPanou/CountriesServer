@@ -18,13 +18,13 @@ namespace CountriesServer.DTO
         public string? Name { get; set; }
 
         public bool? NameResponse { get; set; }
-        public string Region { get; set; }
+        public string? Region { get; set; }
         public bool? RegionResponse { get; set; }
         public double Population { get; set; }
         public int? PopulationResponse { get; set; }
         public double Area { get; set; }
         public int? AreaResponse { get; set; }
-        public string Continent { get; set; }
+        public string? Continent { get; set; }
         public bool ContinentResponse { get; set; }
         public double? Latitude { get; set; }
         public int? LatitudeResponse { get; set; }
