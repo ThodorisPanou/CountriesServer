@@ -10,13 +10,13 @@ namespace CountriesServer.Controllers
     [ApiController]
     public class SessionsController : Controller
     {
-        private readonly SessionService _service;
-        public SessionsController(SessionService service) { _service = service; }
+        private readonly IContextService _service;
+        public SessionsController(IContextService service) { _service = service; }
 
         [HttpPost("guess")]
         public async Task<ResponseDTO> Guess([FromBody] Session guessRequest)
         {
-            var result = await _service.Guess(guessRequest);
+            var result = await _service.Guess(guessRequest.Guess,guessRequest.SessionID);
 
             return result;
         }

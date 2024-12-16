@@ -31,8 +31,9 @@ namespace CountriesServer
             services.AddDbContext<SessionDbContext>(options =>
                 options.UseInMemoryDatabase("SessionsDB"));
             services.AddScoped<CsvService>();
-            services.AddScoped<SessionService>();
-            services.AddScoped<CountriesListService>();
+            services.AddScoped<IContextService,ContextService>();
+            services.AddScoped<IUserSessionService,UserSessionService>();
+            services.AddScoped<ICountriesService,CountriesService>();
             services.AddControllers();
         }
 

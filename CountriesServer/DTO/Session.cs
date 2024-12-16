@@ -4,10 +4,11 @@ namespace CountriesServer.DTO
 {
     public class Session
     {
-        public string? SessionID { get; set; }
+        public string? SessionID { get; set; } = string.Empty;
 
-        public string? Guess { get; set; }
+        public string Guess { get; set; } = String.Empty;
 
-        public int? GuessCount { get; set; }
+        public int? GuessCount { get; set; } = 0;
+        
     }
 }

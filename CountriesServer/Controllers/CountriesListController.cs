@@ -9,14 +9,14 @@ namespace CountriesServer.Controllers
     [ApiController]
     public class CountriesListController : Controller
     {
-        private readonly CountriesListService _service;
+        private readonly ICountriesService _Countries_Service;
 
-        public CountriesListController(CountriesListService service) { _service = service; }
+        public CountriesListController(ICountriesService service) { _Countries_Service = service; }
 
         [HttpGet("GetCountries")]
         public List<String> GetCountries()
         {
-            return _service.GetCountries();
+            return _Countries_Service.GetCountries();
         }
     }
 }

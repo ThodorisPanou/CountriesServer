@@ -4,7 +4,7 @@ namespace CountriesServer.DTO
 {
     public class Country
     {
-        public string? Name { get; set; }
+        public string Name { get; set; } = "";
         public string? Region { get; set; }
         public double Population { get; set; }
         public double Area { get; set; }
