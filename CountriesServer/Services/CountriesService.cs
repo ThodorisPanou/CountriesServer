@@ -8,9 +8,9 @@ namespace CountriesServer.Services
     {
         public List<String> GetCountries();
         public Country GetCountry(string country_name);
-        public List<Country> GetTopCountries(int top);
+        public List<Country> GetTopCountries(int top,int low);
     }
-    public class CountriesService: ICountriesService
+    public class CountriesService : ICountriesService
     {
         private readonly ApplicationDbContext _applicationContext;
 
@@ -32,10 +32,16 @@ namespace CountriesServer.Services
             return country;
         }
 
-        public List<Country> GetTopCountries(int top)
+        public List<Country> GetTopCountries(int top, int low)
         {
-            if (top <= 0) throw new Exception("Get Top Countries Exception, top < 0");
-            return _applicationContext.Countries.OrderByDescending(c => c.Population).Take(top).ToList();
+            if (top <= 0 || low < 0 || low >= top)
+                throw new Exception("Invalid range: Ensure 0 <= low < top");
+
+            return _applicationContext.Countries
+                .OrderByDescending(c => c.Population) 
+                .Skip(low)                            
+                .Take(top - low)                      
+                .ToList();
         }
     }
 }

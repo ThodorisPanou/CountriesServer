@@ -6,7 +6,8 @@ namespace CountriesServer.Services
 {
     public interface IContextService
     {
-        Task<ResponseDTO> Guess(string country,string? sessionID=null);
+        Task<ResponseDTO> Guess(string country,string sessionID);
+        Task<GameSettingsDTO> CreateGame(GameSettingsDTO settings);
     }
     public class ContextService: IContextService
     {
@@ -19,8 +20,17 @@ namespace CountriesServer.Services
             _UserSession = userSession;
             _CountriesService = countriesService;
         }
+        public async Task<GameSettingsDTO> CreateGame(GameSettingsDTO settings)
+        {
+            if (settings == null || settings.Difficulty==null)
+                throw new Exception("Values Can't Be Null");
+            var DifficultyTuple = Data.GameConstants.MapDifficulty(settings.Difficulty);
+            string session = await _UserSession.AddUserSession(DifficultyTuple);
+            settings.AccessToken = session;
+            return settings;
+        }
 
-        public async Task<ResponseDTO> Guess(string country,string? sessionID=null)
+        public async Task<ResponseDTO> Guess(string country,string sessionID)
         {
             Session foundSession = await _UserSession.GetSession(country, sessionID);
 

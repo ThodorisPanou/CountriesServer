@@ -7,9 +7,9 @@ namespace CountriesServer.Services
 {
     public interface IUserSessionService
     {
-        public Task<string> AddUserSession(string country);
+        public Task<string> AddUserSession(Tuple<int, int> difficulty);
 
-        public Task<Session> GetSession(string country, string? sessionID = null);
+        public Task<Session> GetSession(string country, string sessionID);
     }
     public class UserSessionService : IUserSessionService
     {
@@ -22,12 +22,8 @@ namespace CountriesServer.Services
             _CountriesService = countriesService;
         }
 
-        public async Task<Session> GetSession(string country, string? sessionID = null)
+        public async Task<Session> GetSession(string country, string sessionID)
         {
-            if (sessionID == null)
-            {
-                sessionID = await AddUserSession(country);
-            }
             Session? foundSession = _session_context.Sessions.Where(x => x.SessionID == sessionID).FirstOrDefault();
             if (foundSession == null)
                 throw new Exception("Cant find Session with this ID");
@@ -36,13 +32,14 @@ namespace CountriesServer.Services
             return foundSession;
         }
 
-        public async Task<string> AddUserSession(string country)
+        public async Task<string> AddUserSession(Tuple<int,int> difficulty)
         {
             Session Session = new Session();
             Session.SessionID = Guid.NewGuid().ToString();
-            var top25Countries = _CountriesService.GetTopCountries(25);
+            var topCountries = _CountriesService.GetTopCountries(difficulty.Item2, difficulty.Item1);
             Random random = new Random();
-            Session.Guess = top25Countries[random.Next(top25Countries.Count)].Name;
+            Session.Guess = topCountries[random.Next(topCountries.Count)].Name;
+            Console.WriteLine($"country to be guessed: {Session.Guess}");
             _session_context.Add(Session);
             await _session_context.SaveChangesAsync();
             return Session.SessionID;
