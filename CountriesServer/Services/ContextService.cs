@@ -6,7 +6,7 @@ namespace CountriesServer.Services
 {
     public interface IContextService
     {
-        Task<ResponseDTO> Guess(string country,string sessionID);
+        Task<ResponseDTO> Guess(Session guessRequest);
         Task<GameSettingsDTO> CreateGame(GameSettingsDTO settings);
     }
     public class ContextService: IContextService
@@ -30,18 +30,21 @@ namespace CountriesServer.Services
             return settings;
         }
 
-        public async Task<ResponseDTO> Guess(string country,string sessionID)
+        public async Task<ResponseDTO> Guess(Session guessRequest)
         {
-            Session foundSession = await _UserSession.GetSession(country, sessionID);
+            Session foundSession = await _UserSession.GetSession(guessRequest.Guess, guessRequest.SessionID);
 
             ResponseDTO response = new ResponseDTO(foundSession);
 
-            response.Success = country == foundSession.Guess;
+            response.Success = guessRequest.Guess == foundSession.Guess;
 
-            Country requestedCountry = _CountriesService.GetCountry(country);
+            Country requestedCountry = _CountriesService.GetCountry(guessRequest.Guess);
             Country tobeFoundCountry = _CountriesService.GetCountry(foundSession.Guess);
 
             response.CalculateResponse(requestedCountry, tobeFoundCountry);
+
+            if ((guessRequest.GuessCount == CountriesConstants.MAX_GUESSES-1)  && (!response.Success ?? true))
+                response.CorrectCountry = tobeFoundCountry.Name;
 
             return response;
         }

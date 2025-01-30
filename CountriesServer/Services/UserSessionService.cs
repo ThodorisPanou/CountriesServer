@@ -39,7 +39,6 @@ namespace CountriesServer.Services
             var topCountries = _CountriesService.GetTopCountries(difficulty.Item2, difficulty.Item1);
             Random random = new Random();
             Session.Guess = topCountries[random.Next(topCountries.Count)].Name;
-            Console.WriteLine($"country to be guessed: {Session.Guess}");
             _session_context.Add(Session);
             await _session_context.SaveChangesAsync();
             return Session.SessionID;

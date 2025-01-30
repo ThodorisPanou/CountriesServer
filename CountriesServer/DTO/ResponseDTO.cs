@@ -31,6 +31,7 @@ namespace CountriesServer.DTO
         public int? LatitudeResponse { get; set; }
         public double? Longitude { get; set; }
         public int? LongitudeResponse {  get; set; }
+        public string? CorrectCountry { get; set; }
 
 
         public ResponseDTO CopyData(Country requestedCountry)

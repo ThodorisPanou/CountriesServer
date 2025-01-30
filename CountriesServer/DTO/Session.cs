@@ -4,7 +4,7 @@ namespace CountriesServer.DTO
 {
     public class Session
     {
-        public string? SessionID { get; set; } = string.Empty;
+        public string SessionID { get; set; } = string.Empty;
 
         public string Guess { get; set; } = String.Empty;
 

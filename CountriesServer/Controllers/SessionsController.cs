@@ -16,7 +16,7 @@ namespace CountriesServer.Controllers
         [HttpPost("guess")]
         public async Task<ResponseDTO> Guess([FromBody] Session guessRequest)
         {
-            var result = await _service.Guess(guessRequest.Guess,guessRequest.SessionID);
+            var result = await _service.Guess(guessRequest);
 
             return result;
         }

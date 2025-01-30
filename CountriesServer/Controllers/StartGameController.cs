@@ -14,7 +14,7 @@ namespace CountriesServer.Controllers
 
             public StartGameController(IContextService service) { _service = service; }
 
-        [HttpPost("start")]
+            [HttpPost("start")]
             public async Task<GameSettingsDTO> StartGame(GameSettingsDTO settings)
             {
                 return await _service.CreateGame(settings);
